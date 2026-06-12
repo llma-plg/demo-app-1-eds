@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Required for correct iframe sizing — AEM section margins inflate shadow body */
+main > div,
+main > .section,
+main > .section:first-of-type {
+  margin: 0;
+}
+
+main > .section > div {
+  max-width: none;
+  padding: 0;
+}
+
+body {
+  overflow: auto;
+}
+
+main .find-where-to-buy {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+main .find-where-to-buy .retailers-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+main .find-where-to-buy .retailers-heading {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color, #333);
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+/* Empty state card */
+main .find-where-to-buy .empty-state-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+main .find-where-to-buy .empty-state-card .pin-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+main .find-where-to-buy .empty-state-card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+main .find-where-to-buy .empty-state-card p {
+  font-size: 14px;
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+main .find-where-to-buy .cta-button {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #2563eb;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.15s;
+  cursor: pointer;
+}
+
+main .find-where-to-buy .cta-button:hover {
+  opacity: 0.85;
+}
+
+/* Retailer cards grid */
+main .find-where-to-buy .retailers-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  width: 100%;
+}
+
+main .find-where-to-buy .retailer-card {
+  flex: 0 0 calc(50% - 8px);
+  min-width: 260px;
+  max-width: 280px;
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+main .find-where-to-buy .pin-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+main .find-where-to-buy .card-content {
+  flex: 1;
+}
+
+main .find-where-to-buy .card-content h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+main .find-where-to-buy .retailer-type {
+  font-size: 12px;
+  margin: 0;
+}
+
+main .find-where-to-buy .shop-button {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: #2563eb;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  transition: opacity 0.15s;
+  cursor: pointer;
+  border: none;
+  box-sizing: border-box;
+}
+
+main .find-where-to-buy .shop-button:hover {
+  opacity: 0.85;
+}
+
+/* Mobile adjustments */
+@media (max-width: 575px) {
+  main .find-where-to-buy .retailer-card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  main .find-where-to-buy {
+    background: transparent;
+  }
+
+  main .find-where-to-buy .retailers-heading {
+    color: #fff;
+  }
+}
+
+body.dark main .find-where-to-buy {
+  background: transparent;
+}
+
+body.dark main .find-where-to-buy .retailers-heading {
+  color: #fff;
+}
