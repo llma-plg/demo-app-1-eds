@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Required for correct iframe sizing — AEM section margins inflate shadow body */
+main > div,
+main > .section,
+main > .section:first-of-type {
+  margin: 0;
+}
+main > .section > div {
+  max-width: none;
+  padding: 0;
+}
+body {
+  overflow: auto;
+}
+
+main .find-where-to-buy {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 16px;
+  background: transparent;
+}
+
+main .find-where-to-buy .retailers-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 280px;
+}
+
+/* Empty state card */
+main .find-where-to-buy .empty-state-card {
+  max-width: 400px;
+  width: 100%;
+  padding: 32px 24px;
+  border-radius: 12px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+main .find-where-to-buy .empty-state-card .pin-icon {
+  margin: 0 auto 16px;
+  opacity: 0.7;
+  width: 32px;
+  height: 32px;
+}
+
+main .find-where-to-buy .empty-state-card .pin-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+main .find-where-to-buy .empty-state-card h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+main .find-where-to-buy .empty-state-card p {
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+/* Retailers grid — 2 columns, flex row with wrap */
+main .find-where-to-buy .retailers-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+main .find-where-to-buy .retailer-card {
+  flex: 0 0 calc(50% - 8px);
+  max-width: 260px;
+  min-width: 240px;
+  padding: 20px 16px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+main .find-where-to-buy .retailer-card .pin-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+main .find-where-to-buy .retailer-card .pin-circle svg {
+  width: 20px;
+  height: 20px;
+}
+
+main .find-where-to-buy .retailer-card .retailer-name {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+}
+
+main .find-where-to-buy .retailer-card .retailer-type {
+  font-size: 11px;
+  opacity: 0.65;
+  text-transform: capitalize;
+}
+
+main .find-where-to-buy .retailer-card .shop-button {
+  margin-top: 4px;
+  padding: 8px 20px;
+  background: #00a3e0;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s;
+  display: inline-block;
+}
+
+main .find-where-to-buy .retailer-card .shop-button:hover {
+  opacity: 0.9;
+}
+
+/* Responsive — stack single column on very narrow screens */
+@media (max-width: 520px) {
+  main .find-where-to-buy .retailer-card {
+    flex: 0 0 100%;
+    max-width: 400px;
+  }
+}
+
+/* Dark mode — dim outer widget background only, do NOT override palette card bg */
+@media (prefers-color-scheme: dark) {
+  main .find-where-to-buy {
+    background: transparent;
+  }
+}
+
+body.dark main .find-where-to-buy {
+  background: transparent;
+}
