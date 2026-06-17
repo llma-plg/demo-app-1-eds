@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Required for correct iframe sizing — AEM section margins inflate shadow body */
+main > div,
+main > .section,
+main > .section:first-of-type {
+  margin: 0;
+}
+main > .section > div {
+  max-width: none;
+  padding: 0;
+}
+body {
+  overflow: auto;
+}
+
+main .find-where-to-buy {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 16px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Empty state search card */
+main .find-where-to-buy .search-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+main .find-where-to-buy .pin-icon {
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main .find-where-to-buy .search-card h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+main .find-where-to-buy .country-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  color: #333;
+  font-family: inherit;
+}
+
+main .find-where-to-buy .country-input::placeholder {
+  color: #999;
+}
+
+main .find-where-to-buy .search-btn {
+  width: 100%;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+
+main .find-where-to-buy .search-btn:hover {
+  opacity: 0.9;
+}
+
+/* Results view */
+main .find-where-to-buy .retailer-section {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+main .find-where-to-buy .section-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color, #1a1a1a);
+}
+
+main .find-where-to-buy .retailer-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+main .find-where-to-buy .retailer-card {
+  flex: 0 0 calc(50% - 8px);
+  min-width: 240px;
+  max-width: 280px;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+main .find-where-to-buy .pin-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+main .find-where-to-buy .retailer-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+main .find-where-to-buy .retailer-link {
+  font-size: 12px;
+  color: #2563eb;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+main .find-where-to-buy .retailer-link:hover {
+  opacity: 0.8;
+}
+
+/* Mobile responsive */
+@media (max-width: 576px) {
+  main .find-where-to-buy .retailer-card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  main .find-where-to-buy {
+    background: transparent;
+  }
+  main .find-where-to-buy .section-title {
+    color: #f0f0f0;
+  }
+  main .find-where-to-buy .country-input {
+    background: #2a2a2a;
+    color: #f0f0f0;
+  }
+}
+
+body.dark main .find-where-to-buy {
+  background: transparent;
+}
+
+body.dark main .find-where-to-buy .section-title {
+  color: #f0f0f0;
+}
+
+body.dark main .find-where-to-buy .country-input {
+  background: #2a2a2a;
+  color: #f0f0f0;
+}
