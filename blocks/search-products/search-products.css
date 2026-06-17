@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+main > div,
+main > .section,
+main > .section:first-of-type {
+  margin: 0;
+}
+
+main > .section > div {
+  max-width: none;
+  padding: 0;
+}
+
+body {
+  overflow: auto;
+}
+
+main .search-products {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 8px;
+  max-width: 780px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+main .search-products .carousel-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+main .search-products .carousel-container {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+main .search-products .carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+main .search-products .product-card {
+  flex: 0 0 220px;
+  height: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+main .search-products .card-image {
+  position: relative;
+  flex: 6;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main .search-products .card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+main .search-products .category-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #e30613;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 13px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+main .search-products .cta-button {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e30613;
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 13px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+}
+
+main .search-products .cta-button:hover {
+  opacity: 0.9;
+}
+
+main .search-products .card-info {
+  flex: 4;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+main .search-products .product-name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+main .search-products .product-description {
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.78;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+main .search-products .carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+main .search-products .carousel-arrow:hover {
+  background: #fff;
+}
+
+main .search-products .carousel-arrow:focus-visible {
+  outline: 2px solid #e30613;
+  outline-offset: 2px;
+}
+
+main .search-products .left-arrow {
+  left: -4px;
+}
+
+main .search-products .right-arrow {
+  right: -4px;
+}
+
+main .search-products .fade-gradient {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 60px;
+  pointer-events: none;
+  border-radius: 0 10px 10px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  main .search-products {
+    background: #111;
+  }
+
+  main .search-products .product-card {
+    background: #1a1a1a;
+  }
+
+  main .search-products .carousel-arrow {
+    background: rgba(40, 40, 40, 0.95);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+
+  main .search-products .carousel-arrow:hover {
+    background: #333;
+  }
+}
+
+body.dark main .search-products {
+  background: #111;
+}
+
+body.dark main .search-products .product-card {
+  background: #1a1a1a;
+}
+
+body.dark main .search-products .carousel-arrow {
+  background: rgba(40, 40, 40, 0.95);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+body.dark main .search-products .carousel-arrow:hover {
+  background: #333;
+}
