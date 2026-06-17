@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Required for correct iframe sizing — AEM section margins inflate shadow body */
+main > div,
+main > .section,
+main > .section:first-of-type {
+  margin: 0;
+}
+main > .section > div {
+  max-width: none;
+  padding: 0;
+}
+body {
+  overflow: auto;
+}
+
+main .search-products {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 8px;
+  max-width: 780px;
+  margin: 0 auto;
+  position: relative;
+}
+
+main .search-products .carousel-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+main .search-products .carousel {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+
+main .search-products .carousel::-webkit-scrollbar {
+  display: none;
+}
+
+main .search-products .product-card {
+  flex: 0 0 220px;
+  height: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  box-sizing: border-box;
+  position: relative;
+}
+
+main .search-products .image-container {
+  flex: 6;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+main .search-products .image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+main .search-products .cta-button {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #009257;
+  color: white;
+  border: none;
+  border-radius: 13px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+main .search-products .cta-button:hover {
+  opacity: 0.9;
+}
+
+main .search-products .card-content {
+  flex: 4;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+
+main .search-products .category-badge {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: #009257;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+main .search-products .product-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding-right: 60px;
+}
+
+main .search-products .product-description {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.78;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+main .search-products .nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background 0.15s;
+  z-index: 10;
+}
+
+main .search-products .nav-arrow:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+main .search-products .nav-arrow:focus-visible {
+  outline: 2px solid #009257;
+  outline-offset: 2px;
+}
+
+main .search-products .nav-arrow.left {
+  left: 4px;
+}
+
+main .search-products .nav-arrow.right {
+  right: 4px;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  main .search-products {
+    background: transparent;
+  }
+
+  main .search-products .nav-arrow {
+    background: rgba(60, 60, 60, 0.95);
+    color: #fff;
+  }
+
+  main .search-products .nav-arrow:hover {
+    background: rgba(80, 80, 80, 1);
+  }
+}
+
+body.dark main .search-products {
+  background: transparent;
+}
+
+body.dark main .search-products .nav-arrow {
+  background: rgba(60, 60, 60, 0.95);
+  color: #fff;
+}
+
+body.dark main .search-products .nav-arrow:hover {
+  background: rgba(80, 80, 80, 1);
+}
