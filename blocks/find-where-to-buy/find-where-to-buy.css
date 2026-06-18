@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Required for correct iframe sizing — AEM section margins inflate shadow body */
+main > div,
+main > .section,
+main > .section:first-of-type {
+  margin: 0;
+}
+
+main > .section > div {
+  max-width: none;
+  padding: 0;
+}
+
+body {
+  overflow: auto;
+}
+
+main .find-where-to-buy {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 16px;
+  background: transparent;
+}
+
+/* Empty state — single centered card */
+main .find-where-to-buy .empty-state {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* Retailers grid — flex row with gap, max 2 cards wide */
+main .find-where-to-buy .retailers-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+main .find-where-to-buy .retailer-card {
+  flex: 0 0 calc(50% - 8px);
+  min-width: 260px;
+  max-width: 260px;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+main .find-where-to-buy .pin-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+main .find-where-to-buy .retailer-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+main .find-where-to-buy .retailer-type {
+  font-size: 12px;
+  opacity: 0.78;
+  line-height: 1.4;
+}
+
+main .find-where-to-buy .shop-btn {
+  margin-top: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+
+main .find-where-to-buy .shop-btn:hover {
+  opacity: 0.9;
+}
+
+main .find-where-to-buy .shop-btn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Dark mode — support both prefers-color-scheme and body.dark */
+@media (prefers-color-scheme: dark) {
+  main .find-where-to-buy {
+    background: transparent;
+  }
+}
+
+body.dark main .find-where-to-buy {
+  background: transparent;
+}
+
+/* Mobile — single column on narrow screens */
+@media (max-width: 575px) {
+  main .find-where-to-buy .retailer-card {
+    flex: 0 0 100%;
+    max-width: 400px;
+  }
+}
