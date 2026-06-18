@@ -1,15 +1,44 @@
-// Sample data for standalone EDS preview (no bridge).
-// In production, data comes dynamically from bridge.toolResult.
-const SAMPLE_DATA = {
-  name: "Apple MacBook Air 13 M5",
-  description: "Laptop with Apple M5 10-core CPU, 13.6\" Retina Display, 16GB RAM, 512GB SSD.",
-  image_url: "https://lcdn.altex.ro/media/catalog/product/m/a/macbook_air_13_in_m5_midnight_pdp_image_position_1_ce_ww_a118d620.jpg",
-  price: "5.499 lei",
-  category: "Laptopuri"
-};
+// Sample data for standalone/preview mode
+const SAMPLE_DATA = [
+  {
+    name: "GUM® TECHNIQUE Deep Clean Toothbrush",
+    description: "Features soft tapered bristles to clean below the gumline with a Quad-Grip handle for perfect brushing technique.",
+    image_url: "https://www.sunstargum.com/adobe/dynamicmedia/deliver/dm-aid--0a295760-5530-4008-a103-a99e6f050496/00070942125895-524-hero.jpg?preferwebp=true&width=1600&quality=85",
+    category: "Toothbrushes"
+  },
+  {
+    name: "GUM® Professional Clean Floss Picks",
+    description: "Durable mint-flavor dental floss that holds up against the tightest interdental spaces without shredding.",
+    image_url: "https://www.sunstargum.com/adobe/dynamicmedia/deliver/dm-aid--55618c00-ce9d-42fe-a7ea-4207b94c8253/893rr9-product-packaging-flossers-pro-cleanedup-us.png?width=1600&quality=85&preferwebp=true",
+    category: "Dental Floss"
+  },
+  {
+    name: "GUM® Soft-Picks® Original",
+    description: "Gentle, easy-to-use rubber bristle picks for comfortable interdental cleaning.",
+    image_url: "https://www.sunstargum.com/content/dam/sunstar-americas/gum/product-catalogue/us/con/interdental/6323R-Product-Packaging-BTC-SoftPicks-Original-Hero-CleanedUp-US.jpg",
+    category: "Interdental Cleaners"
+  },
+  {
+    name: "GUM® Sonic Powered Toothbrush",
+    description: "Offers 12,000 sonic vibrations for a deep clean, removing plaque 50% more effectively while reaching between teeth.",
+    image_url: "https://www.sunstargum.com/adobe/dynamicmedia/deliver/dm-aid--f5ccd9db-10f3-4785-8550-f70405cb29bf/00070942005432-4100-hero.jpg?preferwebp=true&width=1600&quality=85",
+    category: "Toothbrushes"
+  },
+  {
+    name: "GUM® Soft-Picks® Comfort Flex",
+    description: "Soft rubber bristles with a flexible neck for easy removal of food residue and plaque between teeth.",
+    image_url: "https://www.sunstargum.com/content/dam/sunstar-americas/gum/product-catalogue/us/con/interdental/6705R-Product-Packaging-IDB-Soft-Picks-Comfort-Flex-Mint-Hero-CleanedUp.US.jpg",
+    category: "Interdental Cleaners"
+  },
+  {
+    name: "GUM® ButlerWeave Dental Floss",
+    description: "Strong, smooth floss resistant to shredding that effectively removes plaque between teeth and below the gumline.",
+    image_url: "https://www.sunstargum.com/content/dam/sunstar-americas/gum/product-catalogue/us/con/interdental/1840RQ-Product-Packaging-Floss-ButlerWeave-Mint-Hero-CleanedUp.US.jpg",
+    category: "Dental Floss"
+  }
+];
 
-// Brand palette from BuildWidgetRequest — darkened to luminance ≤ 0.12 for card info strip.
-const PALETTE = ['#bc003b', '#f5cb38'];
+const PALETTE = ['#009257', '#2cb573'];
 
 function getThemedCardBg(palette) {
   if (!palette || !palette[0]) return null;
@@ -42,14 +71,14 @@ export default async function decorate(block, bridge) {
     bridge.applyHostStyles();
     const isPreview = bridge.hostContext?.preview === true;
     if (isPreview) {
-      product = SAMPLE_DATA;
+      product = SAMPLE_DATA[0];
     } else {
       const _result = await bridge.toolResult;
       const structuredContent = _result?.structuredContent || _result;
       product = structuredContent;
     }
   } else {
-    product = SAMPLE_DATA;
+    product = SAMPLE_DATA[0];
   }
 
   block.textContent = '';
@@ -67,90 +96,115 @@ export default async function decorate(block, bridge) {
 }
 
 function renderProduct(block, product, bridge) {
-  if (!product) return;
+  if (!product) {
+    block.textContent = 'No product data available.';
+    return;
+  }
 
   const card = document.createElement('div');
-  card.className = 'product-detail-card';
+  card.className = 'detail-card';
 
-  // Left side: Image container with CTA
-  const imageSection = document.createElement('div');
-  imageSection.className = 'product-image-section';
+  const imageContainer = document.createElement('div');
+  imageContainer.className = 'image-container';
+
+  const CARD_COLORS = ['#378ef0','#9256d9','#0fb5ae','#e68619','#d83790','#2dca72','#4046ca','#72b340'];
+  const fallbackColor = CARD_COLORS[0];
+  const colorDiv = () => {
+    const d = document.createElement('div');
+    d.style.cssText = `width:100%;height:100%;background-color:${fallbackColor};`;
+    return d;
+  };
 
   if (product.image_url) {
     const img = document.createElement('img');
     img.src = product.image_url;
     img.alt = product.name || 'Product image';
     img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-
-    const fallbackColor = '#bc003b';
     img.onerror = () => {
-      const colorDiv = document.createElement('div');
-      colorDiv.style.cssText = `width:100%;height:100%;background-color:${fallbackColor};`;
-      img.parentNode.replaceChild(colorDiv, img);
+      if (img.parentNode) {
+        img.parentNode.replaceChild(colorDiv(), img);
+      }
     };
-
-    imageSection.appendChild(img);
+    imageContainer.appendChild(img);
   } else {
-    const colorDiv = document.createElement('div');
-    colorDiv.style.cssText = 'width:100%;height:100%;background-color:#bc003b;';
-    imageSection.appendChild(colorDiv);
+    imageContainer.appendChild(colorDiv());
   }
 
-  // CTA button on image
   const ctaBtn = document.createElement('button');
-  ctaBtn.className = 'image-cta-btn';
-  ctaBtn.textContent = 'Adauga in cos';
+  ctaBtn.className = 'cta-btn';
+  ctaBtn.textContent = 'Where to Buy';
+  ctaBtn.setAttribute('aria-label', `Find where to buy ${product.name || 'this product'}`);
   if (bridge) {
     ctaBtn.addEventListener('click', () => {
-      bridge.sendMessage(`Add ${product.name} to cart`);
+      bridge.sendMessage(`Where can I buy ${product.name || 'this product'}?`);
     });
   }
-  imageSection.appendChild(ctaBtn);
+  imageContainer.appendChild(ctaBtn);
 
-  card.appendChild(imageSection);
+  card.appendChild(imageContainer);
 
-  // Right side: Content section with darkened palette bg
-  const contentSection = document.createElement('div');
-  contentSection.className = 'product-content-section';
-  contentSection.style.cssText = `background:${theme?.bg ?? '#1a1a1a'};color:${theme?.fg ?? '#fff'};`;
-
-  const nameEl = document.createElement('h2');
-  nameEl.className = 'product-name';
-  nameEl.textContent = product.name || '';
-  nameEl.style.color = theme?.fg ?? '#fff';
-  contentSection.appendChild(nameEl);
+  const content = document.createElement('div');
+  content.className = 'content';
+  content.style.cssText = `background:${theme?.bg ?? '#1a1a1a'};color:${theme?.fg ?? '#fff'}`;
 
   if (product.category) {
-    const categoryChip = document.createElement('span');
-    categoryChip.className = 'category-chip';
-    categoryChip.textContent = product.category;
-    contentSection.appendChild(categoryChip);
+    const category = document.createElement('div');
+    category.className = 'category';
+    category.textContent = product.category;
+    content.appendChild(category);
   }
+
+  const name = document.createElement('h2');
+  name.className = 'product-name';
+  name.textContent = product.name || 'Product';
+  content.appendChild(name);
 
   if (product.description) {
-    const descEl = document.createElement('p');
-    descEl.className = 'product-description';
-    descEl.textContent = product.description;
-    descEl.style.color = theme?.fg ?? '#fff';
-    contentSection.appendChild(descEl);
+    const desc = document.createElement('p');
+    desc.className = 'description';
+    desc.textContent = product.description;
+    content.appendChild(desc);
   }
 
-  if (product.price) {
-    const priceEl = document.createElement('div');
-    priceEl.className = 'product-price';
-    priceEl.textContent = product.price;
-    priceEl.style.color = theme?.fg ?? '#fff';
-    contentSection.appendChild(priceEl);
+  if (product.features && Array.isArray(product.features) && product.features.length > 0) {
+    const featuresList = document.createElement('ul');
+    featuresList.className = 'features';
+    product.features.forEach(feature => {
+      const li = document.createElement('li');
+      li.textContent = feature;
+      featuresList.appendChild(li);
+    });
+    content.appendChild(featuresList);
   }
 
-  if (product.availability) {
-    const availEl = document.createElement('div');
-    availEl.className = 'product-availability';
-    availEl.textContent = product.availability;
-    availEl.style.color = theme?.fg ?? '#fff';
-    contentSection.appendChild(availEl);
+  if (product.rating || product.review_count) {
+    const ratingInfo = document.createElement('div');
+    ratingInfo.className = 'rating-info';
+
+    if (product.rating) {
+      const stars = document.createElement('span');
+      stars.className = 'stars';
+      stars.setAttribute('aria-label', `${product.rating} out of 5 stars`);
+      stars.textContent = '★'.repeat(Math.round(product.rating)) + ' ' + product.rating.toFixed(1);
+      ratingInfo.appendChild(stars);
+    }
+
+    if (product.review_count) {
+      const reviews = document.createElement('span');
+      reviews.textContent = `(${product.review_count} reviews)`;
+      ratingInfo.appendChild(reviews);
+    }
+
+    content.appendChild(ratingInfo);
   }
 
-  card.appendChild(contentSection);
+  if (product.sku) {
+    const sku = document.createElement('div');
+    sku.className = 'sku';
+    sku.textContent = `SKU: ${product.sku}`;
+    content.appendChild(sku);
+  }
+
+  card.appendChild(content);
   block.appendChild(card);
 }
