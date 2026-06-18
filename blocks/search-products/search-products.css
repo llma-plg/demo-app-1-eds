@@ -25,7 +25,7 @@ main .search-products .carousel-wrapper {
   position: relative;
 }
 
-main .search-products .carousel {
+main .search-products .carousel-scroll {
   display: flex;
   flex-direction: row;
   gap: 16px;
@@ -33,10 +33,10 @@ main .search-products .carousel {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding: 0;
+  padding: 4px 0;
 }
 
-main .search-products .carousel::-webkit-scrollbar {
+main .search-products .carousel-scroll::-webkit-scrollbar {
   display: none;
 }
 
@@ -49,40 +49,47 @@ main .search-products .product-card {
   flex-direction: column;
   scroll-snap-align: start;
   box-sizing: border-box;
+  background: var(--background-color, #fff);
 }
 
-main .search-products .image-container {
+main .search-products .product-image {
   position: relative;
   flex: 6;
+  width: 100%;
   overflow: hidden;
 }
 
-main .search-products .image-container img {
+main .search-products .product-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-main .search-products .cta-btn {
+main .search-products .cta-overlay {
   position: absolute;
-  bottom: 12px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 8px 16px;
+  padding: 6px 16px;
+  background: #bc003b;
+  color: #ffffff;
   border: none;
   border-radius: 13px;
-  background: #231f20;
-  color: #fff;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
-  white-space: nowrap;
+  font-family: inherit;
 }
 
-main .search-products .cta-btn:hover {
-  opacity: 0.85;
+main .search-products .cta-overlay:hover {
+  opacity: 0.9;
+}
+
+main .search-products .cta-overlay:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
 
 main .search-products .product-info {
@@ -91,41 +98,52 @@ main .search-products .product-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  box-sizing: border-box;
 }
 
 main .search-products .product-name {
+  margin: 0;
   font-size: 14px;
   font-weight: 700;
   line-height: 1.2;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-main .search-products .product-description {
+main .search-products .product-desc {
+  margin: 0;
   font-size: 11px;
   line-height: 1.3;
   opacity: 0.78;
+  overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  overflow: hidden;
+  flex: 1;
 }
 
-main .search-products .category-row {
-  margin-top: auto;
+main .search-products .product-meta {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
+  font-size: 13px;
+  margin-top: auto;
 }
 
-main .search-products .category-badge {
-  font-size: 13px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  background: rgba(255,255,255,0.12);
+main .search-products .product-price {
+  font-weight: 600;
+}
+
+main .search-products .product-badge {
+  padding: 3px 8px;
+  background: rgba(188, 0, 59, 0.15);
+  color: #bc003b;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 main .search-products .carousel-arrow {
@@ -134,63 +152,67 @@ main .search-products .carousel-arrow {
   transform: translateY(-50%);
   width: 36px;
   height: 36px;
-  border: none;
   border-radius: 50%;
-  background: rgba(255,255,255,0.95);
-  color: #231f20;
-  font-size: 14px;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
   transition: background 0.15s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font-family: inherit;
 }
 
 main .search-products .carousel-arrow:hover {
-  background: #fff;
+  background: rgba(0, 0, 0, 0.7);
 }
 
 main .search-products .carousel-arrow:focus-visible {
-  outline: 2px solid #231f20;
+  outline: 2px solid #bc003b;
   outline-offset: 2px;
 }
 
-main .search-products .carousel-arrow.left {
-  left: -12px;
+main .search-products .carousel-arrow-left {
+  left: 8px;
 }
 
-main .search-products .carousel-arrow.right {
-  right: -12px;
+main .search-products .carousel-arrow-right {
+  right: 8px;
 }
 
+/* Dark mode — support both prefers-color-scheme and body.dark */
 @media (prefers-color-scheme: dark) {
   main .search-products {
     background: transparent;
   }
+  main .search-products .product-badge {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+  }
   main .search-products .carousel-arrow {
-    background: rgba(50,50,50,0.95);
-    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
   }
   main .search-products .carousel-arrow:hover {
-    background: #3a3a3a;
-  }
-  main .search-products .carousel-arrow:focus-visible {
-    outline-color: #009257;
+    background: rgba(255, 255, 255, 0.3);
   }
 }
 
 body.dark main .search-products {
   background: transparent;
 }
+
+body.dark main .search-products .product-badge {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
 body.dark main .search-products .carousel-arrow {
-  background: rgba(50,50,50,0.95);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
 }
+
 body.dark main .search-products .carousel-arrow:hover {
-  background: #3a3a3a;
-}
-body.dark main .search-products .carousel-arrow:focus-visible {
-  outline-color: #009257;
+  background: rgba(255, 255, 255, 0.3);
 }

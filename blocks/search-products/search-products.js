@@ -2,59 +2,68 @@
 // In production, data comes dynamically from bridge.toolResult.
 const SAMPLE_DATA = [
   {
-    "name": "GUM Deep Clean Technique Toothbrush",
-    "description": "Soft tapered bristles clean below the gumline with Quad-Grip handle for perfect brushing technique.",
-    "image_url": "https://www.sunstargum.com/content/dam/sunstar-americas/retail-digital-shelf/consumer/Adult%20Toothbrushes/524-Technique%20Deep%20Full/00070942125895-524-HERO.jpg/jcr:content/renditions/cq5dam.zoom.2048.2048.jpeg",
-    "category": "Toothbrushes"
+    "name": "Apple MacBook Air 13 M5",
+    "description": "Laptop with Apple M5 10-core CPU, 13.6\" Retina Display, 16GB RAM, 512GB SSD.",
+    "image_url": "https://lcdn.altex.ro/media/catalog/product/m/a/macbook_air_13_in_m5_midnight_pdp_image_position_1_ce_ww_a118d620.jpg",
+    "price": "5.499 lei",
+    "category": "Laptopuri"
   },
   {
-    "name": "GUM Professional Clean Floss Picks",
-    "description": "Durable mint-flavored dental floss that holds up against the tightest interdental spaces without shredding.",
-    "image_url": "https://www.sunstargum.com/adobe/dynamicmedia/deliver/dm-aid--55618c00-ce9d-42fe-a7ea-4207b94c8253/893rr9-product-packaging-flossers-pro-clean-hero-cleanedup-us.png?width=1600&quality=85&preferwebp=true",
-    "category": "Dental Floss"
+    "name": "Samsung Galaxy A57 5G",
+    "description": "Smartphone with 128GB storage, 8GB RAM, Dual SIM, Awesome Navy.",
+    "image_url": "https://lcdn.altex.ro/media/catalog/product/s/a/samsung_galaxy_a57_1aed30e4.jpg",
+    "price": "1.750 lei",
+    "category": "Telefoane"
   },
   {
-    "name": "GUM Soft-Picks Original",
-    "description": "Gentle, easy-to-use rubber bristle picks for comfortable cleaning between teeth.",
-    "image_url": "https://www.sunstargum.com/adobe/dynamicmedia/deliver/dm-aid--a9a60fce-c215-4647-93d2-af40c8df6ae0/6323r-product-packaging-btc-softpicks-original-hero-cleanedup-us.jpg?quality=85&width=1600&preferwebp=true",
-    "category": "Interdental Cleaners"
+    "name": "Samsung QLED 50Q8F 4K TV",
+    "description": "Smart TV QLED 4K HDR with 125cm display.",
+    "image_url": "https://lcdn.altex.ro/media/catalog/product/g/q/gq75q8faauxzg_006_front2_titan_gray_ac0aa39d.jpg",
+    "price": "1.680 lei",
+    "category": "Televizoare"
   },
   {
-    "name": "GUM Sonic Powered Toothbrush",
-    "description": "12,000 sonic vibrations for a deep clean, removing plaque 50% more effectively while reaching between teeth.",
-    "image_url": "https://www.sunstargum.com/adobe/dynamicmedia/deliver/dm-aid--f5ccd9db-10f3-4785-8550-f70405cb29bf/00070942005432-4100-hero.jpg?quality=85&width=1600&preferwebp=true",
-    "category": "Toothbrushes"
+    "name": "BEKO B3WBT681415W Washing Machine",
+    "description": "Built-in washing machine with EnergySpin, SteamCure, 8kg, 1400rpm, Class A.",
+    "image_url": "https://lcdn.altex.ro/media/catalog/product/b/3/b3wbt681415w_06_a8d490bd.jpg",
+    "price": "2.399 lei",
+    "category": "Electrocasnice"
   },
   {
-    "name": "GUM Soft-Picks Comfort Flex",
-    "description": "Soft rubber bristles with a flexible neck for a fresh mint breeze every time you clean between teeth.",
-    "image_url": "https://www.sunstargum.com/adobe/dynamicmedia/deliver/dm-aid--c0f4b923-ffc5-4451-a966-6962237b1621/6705r-product-packaging-idb-soft-picks-comfort-flex-mint-hero-cleanedup-us.jpg?quality=85&width=1600&preferwebp=true",
-    "category": "Interdental Cleaners"
+    "name": "Lenovo LOQ Essential 15 Gaming",
+    "description": "Gaming laptop with AMD Ryzen 7, 16GB RAM, 512GB SSD, NVIDIA RTX 3050 6GB.",
+    "image_url": "https://lcdn.altex.ro/media/catalog/product/l/e/lenovo_loq_15arp10e_14_cd54942e.jpg",
+    "price": "3.699 lei",
+    "category": "Laptopuri Gaming"
   }
 ];
 
-// Brand palette from BuildWidgetRequest — used to derive card info-strip background.
-const PALETTE = ['#231f20','#464c4e','#009257','#2cb573','#64656a'];
+// Brand palette from BuildWidgetRequest
+const PALETTE = ['#bc003b', '#f5cb38'];
 
 function getThemedCardBg(palette) {
   if (!palette || !palette[0]) return null;
-  let hex = palette[0].replace('#','');
-  if(hex.length===3)hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-  if(hex.length!==6)return null;
-  let [r,g,b]=[parseInt(hex.slice(0,2),16),parseInt(hex.slice(2,4),16),parseInt(hex.slice(4,6),16)];
-  if(isNaN(r)||isNaN(g)||isNaN(b))return null;
-  const lum=(c)=>{const s=c/255;return s<=0.03928?s/12.92:Math.pow((s+0.055)/1.055,2.4);};
-  const relLum=(r,g,b)=>0.2126*lum(r)+0.7152*lum(g)+0.0722*lum(b);
-  if(relLum(r,g,b)<=0.12)return{bg:`#${hex}`,fg:'#ffffff'};
-  let lo=0,hi=1;
-  for(let i=0;i<20;i++){const m=(lo+hi)/2;if(relLum(Math.round(r*m),Math.round(g*m),Math.round(b*m))>0.12)hi=m;else lo=m;}
-  const dr=Math.round(r*lo),dg=Math.round(g*lo),db=Math.round(b*lo);
-  return{bg:`#${dr.toString(16).padStart(2,'0')}${dg.toString(16).padStart(2,'0')}${db.toString(16).padStart(2,'0')}`,fg:'#ffffff'};
+  let hex = palette[0].replace('#', '');
+  if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+  if (hex.length !== 6) return null;
+  let [r, g, b] = [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return null;
+  const lum = (c) => { const s=c/255; return s<=0.03928?s/12.92:Math.pow((s+0.055)/1.055,2.4); };
+  const relLum = (r,g,b) => 0.2126*lum(r)+0.7152*lum(g)+0.0722*lum(b);
+  if (relLum(r,g,b) <= 0.12) return { bg: `#${hex}`, fg: '#ffffff' };
+  let lo=0, hi=1;
+  for (let i=0; i<20; i++) {
+    const m=(lo+hi)/2;
+    if (relLum(Math.round(r*m),Math.round(g*m),Math.round(b*m)) > 0.12) hi=m; else lo=m;
+  }
+  const dr=Math.round(r*lo), dg=Math.round(g*lo), db=Math.round(b*lo);
+  return {
+    bg:`#${dr.toString(16).padStart(2,'0')}${dg.toString(16).padStart(2,'0')}${db.toString(16).padStart(2,'0')}`,
+    fg:'#ffffff'
+  };
 }
 
 const theme = getThemedCardBg(PALETTE);
-
-const CARD_COLORS = ['#378ef0','#9256d9','#0fb5ae','#e68619','#d83790','#2dca72','#4046ca','#72b340'];
 
 export default async function decorate(block, bridge) {
   let items;
@@ -89,20 +98,22 @@ export default async function decorate(block, bridge) {
 }
 
 function renderCarousel(block, items, bridge) {
+  const CARD_COLORS = ['#378ef0','#9256d9','#0fb5ae','#e68619','#d83790','#2dca72','#4046ca','#72b340'];
+
   const wrapper = document.createElement('div');
   wrapper.className = 'carousel-wrapper';
 
-  const carousel = document.createElement('div');
-  carousel.className = 'carousel';
+  const scrollContainer = document.createElement('div');
+  scrollContainer.className = 'carousel-scroll';
 
-  const visibleItems = items.slice(0, 5);
+  const displayItems = items.slice(0, 5);
 
-  visibleItems.forEach((item, i) => {
+  displayItems.forEach((item, i) => {
     const card = document.createElement('div');
     card.className = 'product-card';
 
     const imageContainer = document.createElement('div');
-    imageContainer.className = 'image-container';
+    imageContainer.className = 'product-image';
 
     const fallbackColor = CARD_COLORS[i % CARD_COLORS.length];
     const colorDiv = () => {
@@ -114,8 +125,7 @@ function renderCarousel(block, items, bridge) {
     if (item.image_url) {
       const img = document.createElement('img');
       img.src = item.image_url;
-      img.alt = item.name || 'Product image';
-      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      img.alt = item.name || '';
       img.onerror = () => {
         if (img.parentNode) {
           img.parentNode.replaceChild(colorDiv(), img);
@@ -127,12 +137,12 @@ function renderCarousel(block, items, bridge) {
     }
 
     const ctaBtn = document.createElement('button');
-    ctaBtn.className = 'cta-btn';
-    ctaBtn.textContent = 'View Details';
-    ctaBtn.setAttribute('aria-label', `View details for ${item.name || 'product'}`);
+    ctaBtn.className = 'cta-overlay';
+    ctaBtn.textContent = 'Vezi detalii';
+    ctaBtn.setAttribute('aria-label', `Vezi detalii despre ${item.name || 'produs'}`);
     if (bridge) {
       ctaBtn.addEventListener('click', () => {
-        bridge.sendMessage(`Tell me more about ${item.name}`);
+        bridge.sendMessage(`Spune-mi mai multe despre ${item.name}`);
       });
     }
     imageContainer.appendChild(ctaBtn);
@@ -143,33 +153,40 @@ function renderCarousel(block, items, bridge) {
     info.className = 'product-info';
     info.style.cssText = `background:${theme?.bg ?? '#1a1a1a'};color:${theme?.fg ?? '#fff'}`;
 
-    const name = document.createElement('div');
+    const name = document.createElement('h3');
     name.className = 'product-name';
     name.textContent = item.name || '';
     info.appendChild(name);
 
-    const description = document.createElement('div');
-    description.className = 'product-description';
-    description.textContent = item.description || '';
-    info.appendChild(description);
+    const desc = document.createElement('p');
+    desc.className = 'product-desc';
+    desc.textContent = item.description || '';
+    info.appendChild(desc);
 
-    const categoryRow = document.createElement('div');
-    categoryRow.className = 'category-row';
+    const metaRow = document.createElement('div');
+    metaRow.className = 'product-meta';
 
-    const categoryBadge = document.createElement('span');
-    categoryBadge.className = 'category-badge';
-    categoryBadge.textContent = item.category || '';
-    categoryRow.appendChild(categoryBadge);
+    const price = document.createElement('span');
+    price.className = 'product-price';
+    price.textContent = item.price || '';
+    metaRow.appendChild(price);
 
-    info.appendChild(categoryRow);
+    if (item.category) {
+      const badge = document.createElement('span');
+      badge.className = 'product-badge';
+      badge.textContent = item.category;
+      metaRow.appendChild(badge);
+    }
 
+    info.appendChild(metaRow);
     card.appendChild(info);
-    carousel.appendChild(card);
+
+    scrollContainer.appendChild(card);
   });
 
-  wrapper.appendChild(carousel);
+  wrapper.appendChild(scrollContainer);
 
-  if (visibleItems.length > 3) {
+  if (displayItems.length > 0) {
     const fade = document.createElement('div');
     fade.className = 'carousel-fade';
     fade.style.cssText = `position:absolute;top:0;right:0;height:100%;width:60px;background:linear-gradient(to right,transparent,${theme?.bg ?? '#1a1a1a'}cc);pointer-events:none;border-radius:0 10px 10px 0;`;
@@ -177,26 +194,25 @@ function renderCarousel(block, items, bridge) {
   }
 
   const leftArrow = document.createElement('button');
-  leftArrow.className = 'carousel-arrow left';
+  leftArrow.className = 'carousel-arrow carousel-arrow-left';
+  leftArrow.innerHTML = '&#9664;';
   leftArrow.setAttribute('aria-label', 'Scroll left');
-  leftArrow.textContent = '◀';
   leftArrow.style.display = 'none';
 
   const rightArrow = document.createElement('button');
-  rightArrow.className = 'carousel-arrow right';
+  rightArrow.className = 'carousel-arrow carousel-arrow-right';
+  rightArrow.innerHTML = '&#9654;';
   rightArrow.setAttribute('aria-label', 'Scroll right');
-  rightArrow.textContent = '▶';
 
   const updateArrows = () => {
-    const scrollLeft = carousel.scrollLeft;
-    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-    leftArrow.style.display = scrollLeft > 5 ? 'flex' : 'none';
-    rightArrow.style.display = scrollLeft < maxScroll - 5 ? 'flex' : 'none';
+    const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
+    leftArrow.style.display = scrollLeft > 10 ? 'flex' : 'none';
+    rightArrow.style.display = scrollLeft < scrollWidth - clientWidth - 10 ? 'flex' : 'none';
   };
 
   const scrollByCard = (direction) => {
     const cardWidth = 220 + 16;
-    carousel.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
+    scrollContainer.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
   };
 
   leftArrow.addEventListener('click', () => scrollByCard(-1));
@@ -214,7 +230,7 @@ function renderCarousel(block, items, bridge) {
     }
   });
 
-  carousel.addEventListener('scroll', updateArrows);
+  scrollContainer.addEventListener('scroll', updateArrows);
   updateArrows();
 
   wrapper.appendChild(leftArrow);
