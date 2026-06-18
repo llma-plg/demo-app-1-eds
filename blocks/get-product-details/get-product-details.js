@@ -1,14 +1,15 @@
 // Sample data for standalone EDS preview (no bridge).
-// Using first product from samplePayload for detail card display.
+// In production, data comes dynamically from bridge.toolResult.
 const SAMPLE_DATA = {
-  name: 'GUM Deep Clean Technique Toothbrush',
-  description: 'Soft tapered bristles clean below the gumline with Quad-Grip handle for perfect brushing technique.',
-  image_url: 'https://www.sunstargum.com/content/dam/sunstar-americas/retail-digital-shelf/consumer/Adult%20Toothbrushes/524-Technique%20Deep%20Full/00070942125895-524-HERO.jpg/jcr:content/renditions/cq5dam.zoom.2048.2048.jpeg',
-  category: 'Toothbrushes'
+  name: "Apple MacBook Air 13 M5",
+  description: "Laptop with Apple M5 10-core CPU, 13.6\" Retina Display, 16GB RAM, 512GB SSD.",
+  image_url: "https://lcdn.altex.ro/media/catalog/product/m/a/macbook_air_13_in_m5_midnight_pdp_image_position_1_ce_ww_a118d620.jpg",
+  price: "5.499 lei",
+  category: "Laptopuri"
 };
 
-// Brand palette from BuildWidgetRequest
-const PALETTE = ['#231f20', '#464c4e', '#009257', '#2cb573', '#64656a'];
+// Brand palette from BuildWidgetRequest — darkened to luminance ≤ 0.12 for card info strip.
+const PALETTE = ['#bc003b', '#f5cb38'];
 
 function getThemedCardBg(palette) {
   if (!palette || !palette[0]) return null;
@@ -66,17 +67,14 @@ export default async function decorate(block, bridge) {
 }
 
 function renderProduct(block, product, bridge) {
-  if (!product) {
-    block.textContent = 'No product data available';
-    return;
-  }
+  if (!product) return;
 
   const card = document.createElement('div');
   card.className = 'product-detail-card';
 
-  // Left: Image section
+  // Left side: Image container with CTA
   const imageSection = document.createElement('div');
-  imageSection.className = 'product-image';
+  imageSection.className = 'product-image-section';
 
   if (product.image_url) {
     const img = document.createElement('img');
@@ -84,7 +82,7 @@ function renderProduct(block, product, bridge) {
     img.alt = product.name || 'Product image';
     img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
 
-    const fallbackColor = '#378ef0';
+    const fallbackColor = '#bc003b';
     img.onerror = () => {
       const colorDiv = document.createElement('div');
       colorDiv.style.cssText = `width:100%;height:100%;background-color:${fallbackColor};`;
@@ -92,47 +90,65 @@ function renderProduct(block, product, bridge) {
     };
 
     imageSection.appendChild(img);
-
-    // CTA button on image
-    const ctaBtn = document.createElement('button');
-    ctaBtn.className = 'cta-on-image';
-    ctaBtn.textContent = 'Find Where to Buy';
-    if (bridge) {
-      ctaBtn.addEventListener('click', () => {
-        bridge.sendMessage(`Where can I buy ${product.name}?`);
-      });
-    }
-    imageSection.appendChild(ctaBtn);
   } else {
     const colorDiv = document.createElement('div');
-    colorDiv.style.cssText = 'width:100%;height:100%;background-color:#378ef0;';
+    colorDiv.style.cssText = 'width:100%;height:100%;background-color:#bc003b;';
     imageSection.appendChild(colorDiv);
   }
 
+  // CTA button on image
+  const ctaBtn = document.createElement('button');
+  ctaBtn.className = 'image-cta-btn';
+  ctaBtn.textContent = 'Adauga in cos';
+  if (bridge) {
+    ctaBtn.addEventListener('click', () => {
+      bridge.sendMessage(`Add ${product.name} to cart`);
+    });
+  }
+  imageSection.appendChild(ctaBtn);
+
   card.appendChild(imageSection);
 
-  // Right: Content section
+  // Right side: Content section with darkened palette bg
   const contentSection = document.createElement('div');
-  contentSection.className = 'product-content';
-  contentSection.style.cssText = `background: ${theme?.bg ?? '#1a1a1a'}; color: ${theme?.fg ?? '#fff'};`;
+  contentSection.className = 'product-content-section';
+  contentSection.style.cssText = `background:${theme?.bg ?? '#1a1a1a'};color:${theme?.fg ?? '#fff'};`;
 
   const nameEl = document.createElement('h2');
   nameEl.className = 'product-name';
-  nameEl.textContent = product.name || 'Product';
+  nameEl.textContent = product.name || '';
+  nameEl.style.color = theme?.fg ?? '#fff';
   contentSection.appendChild(nameEl);
+
+  if (product.category) {
+    const categoryChip = document.createElement('span');
+    categoryChip.className = 'category-chip';
+    categoryChip.textContent = product.category;
+    contentSection.appendChild(categoryChip);
+  }
 
   if (product.description) {
     const descEl = document.createElement('p');
     descEl.className = 'product-description';
     descEl.textContent = product.description;
+    descEl.style.color = theme?.fg ?? '#fff';
     contentSection.appendChild(descEl);
   }
 
-  if (product.category) {
-    const categoryEl = document.createElement('span');
-    categoryEl.className = 'product-category';
-    categoryEl.textContent = product.category;
-    contentSection.appendChild(categoryEl);
+  if (product.price) {
+    const priceEl = document.createElement('div');
+    priceEl.className = 'product-price';
+    priceEl.textContent = product.price;
+    priceEl.style.color = theme?.fg ?? '#fff';
+    contentSection.appendChild(priceEl);
+  }
+
+  if (product.availability) {
+    const availEl = document.createElement('div');
+    availEl.className = 'product-availability';
+    availEl.textContent = product.availability;
+    availEl.style.color = theme?.fg ?? '#fff';
+    contentSection.appendChild(availEl);
   }
 
   card.appendChild(contentSection);
