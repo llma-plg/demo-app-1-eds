@@ -220,9 +220,13 @@ function renderProduct(block, product, bridge) {
       const original = continueBtn.textContent;
       continueBtn.textContent = 'Preparing link…';
       try {
+        // Prefer the model-supplied intent; fall back to a product-derived one
+        // so the handoff still carries context if the model omitted intent.
+        const intent = product.intent
+          || (product.name ? `user is interested in ${product.name}` : '');
         // eslint-disable-next-line no-console
-        console.log('[handoff] minting, intent =', product.intent || '(empty)');
-        const result = await bridge.callTool('mint-handoff', { intent: product.intent || '' });
+        console.log('[handoff] minting, intent =', intent || '(empty)');
+        const result = await bridge.callTool('mint-handoff', { intent });
         // eslint-disable-next-line no-console
         console.log('[handoff] mint result =', result);
         const token = result?.structuredContent?.token;
