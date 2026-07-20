@@ -205,6 +205,37 @@ function renderProduct(block, product, bridge) {
     content.appendChild(sku);
   }
 
+  // "Continue on website" handoff: mint a single-use token carrying the user's
+  // anonymized intent (echoed by the get-product-details handler into
+  // structuredContent.intent), then ask the host to open the partner site with
+  // only the opaque token in the URL. Only shown inside a host bridge — a
+  // standalone EDS preview has no host to open a link through.
+  if (bridge) {
+    const continueBtn = document.createElement('button');
+    continueBtn.className = 'continue-btn';
+    continueBtn.textContent = 'Continue on website';
+    continueBtn.setAttribute('aria-label', 'Continue this session on the website');
+    continueBtn.addEventListener('click', async () => {
+      continueBtn.disabled = true;
+      const original = continueBtn.textContent;
+      continueBtn.textContent = 'Preparing link…';
+      try {
+        const result = await bridge.callTool('mint-handoff', { intent: product.intent || '' });
+        const token = result?.structuredContent?.token;
+        if (!token) throw new Error('no token returned');
+        // Hard-coded partner site resume page (no trailing slash — the path is
+        // appended below). The host must allow this origin (redirectDomains).
+        const PARTNER_BASE = 'https://www.sunstargum.com/us-en';
+        await bridge.openLink(`${PARTNER_BASE}/resume?h=${encodeURIComponent(token)}`);
+        continueBtn.textContent = 'Opening website…';
+      } catch (e) {
+        continueBtn.disabled = false;
+        continueBtn.textContent = original;
+      }
+    });
+    content.appendChild(continueBtn);
+  }
+
   card.appendChild(content);
   block.appendChild(card);
 }
