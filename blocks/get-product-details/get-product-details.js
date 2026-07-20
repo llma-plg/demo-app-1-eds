@@ -220,15 +220,36 @@ function renderProduct(block, product, bridge) {
       const original = continueBtn.textContent;
       continueBtn.textContent = 'Preparing link…';
       try {
+        // eslint-disable-next-line no-console
+        console.log('[handoff] minting, intent =', product.intent || '(empty)');
         const result = await bridge.callTool('mint-handoff', { intent: product.intent || '' });
+        // eslint-disable-next-line no-console
+        console.log('[handoff] mint result =', result);
         const token = result?.structuredContent?.token;
         if (!token) throw new Error('no token returned');
+
         // Hard-coded partner site resume page (no trailing slash — the path is
         // appended below). The host must allow this origin (redirectDomains).
         const PARTNER_BASE = 'https://www.sunstargum.com/us-en';
-        await bridge.openLink(`${PARTNER_BASE}/resume?h=${encodeURIComponent(token)}`);
+        const url = `${PARTNER_BASE}/resume?h=${encodeURIComponent(token)}`;
+
+        // Open the external URL. ChatGPT implements the vendor openExternal
+        // (gated on redirectDomains); the MCP-standard ui/open-link is used by
+        // other hosts. Try the vendor API first, then the bridge, then a
+        // plain anchor as a last resort.
+        // eslint-disable-next-line no-console
+        console.log('[handoff] opening', url);
+        if (typeof window !== 'undefined' && typeof window.openai?.openExternal === 'function') {
+          window.openai.openExternal({ href: url });
+        } else if (typeof bridge.openLink === 'function') {
+          await bridge.openLink(url);
+        } else {
+          window.open(url, '_blank', 'noopener');
+        }
         continueBtn.textContent = 'Opening website…';
       } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('[handoff] failed:', e);
         continueBtn.disabled = false;
         continueBtn.textContent = original;
       }
