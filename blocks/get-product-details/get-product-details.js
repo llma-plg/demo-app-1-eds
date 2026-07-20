@@ -232,10 +232,13 @@ function renderProduct(block, product, bridge) {
         const token = result?.structuredContent?.token;
         if (!token) throw new Error('no token returned');
 
-        // Hard-coded partner site resume page (no trailing slash — the path is
-        // appended below). The host must allow this origin (redirectDomains).
-        const PARTNER_BASE = 'https://www.sunstargum.com/us-en';
-        const url = `${PARTNER_BASE}/resume?h=${encodeURIComponent(token)}`;
+        // Deep-link to the real product page on sunstargum.com, carrying the
+        // handoff token so the site can optionally redeem the intent. The
+        // product_url comes from get_product_details' structuredContent; fall
+        // back to the US products index if it's missing.
+        const productUrl = product.product_url || 'https://www.sunstargum.com/us-en/products.html';
+        const sep = productUrl.includes('?') ? '&' : '?';
+        const url = `${productUrl}${sep}h=${encodeURIComponent(token)}`;
 
         // Open the external URL. ChatGPT implements the vendor openExternal
         // (gated on redirectDomains); the MCP-standard ui/open-link is used by
