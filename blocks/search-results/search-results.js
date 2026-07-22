@@ -1,10 +1,12 @@
 // Sample data for standalone EDS preview (no bridge).
 // In production, data comes dynamically from bridge.toolResult.
-const SAMPLE_DATA = [
-  { title: 'Whole body health starts with oral health.', source: 'https://www.sunstargum.com/us-en/', score: 3.356 },
-  { title: 'Elevate Your Gum Health with GUM®', source: 'https://www.sunstargum.com/ca-en/', score: 3.325 },
-  { title: 'Clean Between To Start Your Oral Care Routine', source: 'https://www.sunstargum.com/gb-en/', score: 3.285 }
-];
+const SAMPLE_DATA = {
+  query: 'sensitive teeth routine',
+  result: 'Your personalized GUM sensitive teeth routine\nUltra-soft toothbrush for gentle yet effective plaque removal\nSensitivity toothpaste to help relieve discomfort and strengthen enamel\nAlcohol-free mouthwash to soothe and protect sensitive teeth and gums\nInterdental cleaners for a more complete clean where toothbrushes can’t reach',
+};
+
+// Same hero image is used for every result — a static asset, not per-result data.
+const HERO_IMAGE = new URL('./assets/hero.webp', import.meta.url).href;
 
 // Brand palette from BuildWidgetRequest — used to derive card background.
 const PALETTE = ['#009257', '#2cb573'];
@@ -15,49 +17,70 @@ function getThemedCardBg(palette) {
   let hex = palette[0].replace('#', '');
   if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
   if (hex.length !== 6) return null;
-  let [r, g, b] = [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)];
+  const [r, g, b] = [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)];
   if (isNaN(r) || isNaN(g) || isNaN(b)) return null;
-  const lum = (c) => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+  const lum = (c) => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; };
   const relLum = (r, g, b) => 0.2126 * lum(r) + 0.7152 * lum(g) + 0.0722 * lum(b);
   if (relLum(r, g, b) <= 0.12) return { bg: `#${hex}`, fg: '#ffffff' };
-  let lo = 0, hi = 1;
+  let lo = 0; let
+    hi = 1;
   for (let i = 0; i < 20; i++) {
     const mid = (lo + hi) / 2;
     if (relLum(Math.round(r * mid), Math.round(g * mid), Math.round(b * mid)) > 0.12) hi = mid; else lo = mid;
   }
-  const dr = Math.round(r * lo), dg = Math.round(g * lo), db = Math.round(b * lo);
+  const dr = Math.round(r * lo); const dg = Math.round(g * lo); const
+    db = Math.round(b * lo);
   return {
     bg: `#${dr.toString(16).padStart(2, '0')}${dg.toString(16).padStart(2, '0')}${db.toString(16).padStart(2, '0')}`,
-    fg: '#ffffff'
+    fg: '#ffffff',
   };
 }
 
 const theme = getThemedCardBg(PALETTE);
 
+// Splits a gensearch answer into a lead-in title and bullet items. Gensearch
+// returns free-form text (often "title line" followed by itemized points on
+// their own lines); this has no guaranteed structure, so a single-line/single-
+// paragraph answer (no itemized points) falls back to plain prose instead of
+// being misread as one bullet.
+function parseAnswer(text) {
+  if (!text) return { title: '', bullets: [] };
+  const lines = text
+    .split('\n')
+    .map((l) => l.replace(/^[-*•]\s*/, '').trim())
+    .filter(Boolean);
+
+  if (lines.length <= 1) {
+    return { title: '', bullets: [] };
+  }
+
+  const [first, ...rest] = lines;
+  return { title: first, bullets: rest };
+}
+
 export default async function decorate(block, bridge) {
-  let results;
+  let data;
 
   if (bridge) {
     bridge.applyHostStyles();
     const isPreview = bridge.hostContext?.preview === true;
     if (isPreview) {
-      results = SAMPLE_DATA;
+      data = SAMPLE_DATA;
     } else {
       const _result = await bridge.toolResult;
       const structuredContent = _result?.structuredContent || _result;
-      // structuredContent.results — bare array outputSchema; key derived from actionName "search"
-      results = structuredContent?.results || [];
+      data = structuredContent;
     }
   } else {
-    results = SAMPLE_DATA;
+    data = SAMPLE_DATA;
   }
 
   block.textContent = '';
 
-  if (!results || results.length === 0) {
+  if (!data || !data.result) {
     renderEmptyState(block);
   } else {
-    renderResults(block, results, bridge);
+    renderAnswer(block, data, bridge);
   }
 
   if (bridge) {
@@ -71,69 +94,130 @@ export default async function decorate(block, bridge) {
   }
 }
 
+function renderHero(card) {
+  const heroContainer = document.createElement('div');
+  heroContainer.className = 'search-results-hero';
+
+  const img = document.createElement('img');
+  img.src = HERO_IMAGE;
+  img.alt = '';
+  heroContainer.appendChild(img);
+
+  card.appendChild(heroContainer);
+}
+
 function renderEmptyState(block) {
   const card = document.createElement('div');
-  card.className = 'search-results-empty';
-  card.style.cssText = `background:${theme?.bg ?? '#1a3a5c'};color:${theme?.fg ?? '#fff'}`;
+  card.className = 'search-results-card';
+
+  renderHero(card);
+
+  const content = document.createElement('div');
+  content.className = 'search-results-content';
 
   const icon = document.createElement('div');
   icon.className = 'search-icon';
   icon.innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
-  card.appendChild(icon);
+  content.appendChild(icon);
 
   const heading = document.createElement('h2');
   heading.textContent = 'No results found';
-  card.appendChild(heading);
+  content.appendChild(heading);
 
+  card.appendChild(content);
   block.appendChild(card);
 }
 
-function renderResults(block, results, bridge) {
-  const container = document.createElement('div');
-  container.className = 'search-results-list';
+function renderAnswer(block, data, bridge) {
+  const { result: resultText, query } = data;
+  const { title, bullets } = parseAnswer(resultText);
 
-  results.slice(0, 5).forEach((result) => {
-    const card = document.createElement('div');
-    card.className = 'result-card';
-    card.style.cssText = `background:${theme?.bg ?? '#1a3a5c'};color:${theme?.fg ?? '#fff'}`;
+  const card = document.createElement('div');
+  card.className = 'search-results-card';
+  card.style.setProperty('--card-bg', theme?.bg ?? '#1a3a5c');
+  card.style.setProperty('--card-fg', theme?.fg ?? '#fff');
 
-    const title = document.createElement('h3');
-    title.className = 'result-title';
-    title.textContent = result.title || result.source || 'Untitled';
-    card.appendChild(title);
+  renderHero(card);
 
-    if (result.source) {
-      const source = document.createElement('p');
-      source.className = 'result-source';
-      source.textContent = result.source;
-      card.appendChild(source);
-    }
+  const content = document.createElement('div');
+  content.className = 'search-results-content';
 
-    if (typeof result.score === 'number') {
-      const score = document.createElement('span');
-      score.className = 'result-score';
-      score.textContent = `Score: ${result.score.toFixed(2)}`;
-      card.appendChild(score);
-    }
+  const heading = document.createElement('h2');
+  heading.className = 'search-results-title';
+  heading.textContent = title || 'Search results';
+  content.appendChild(heading);
 
-    if (result.source) {
-      const link = document.createElement('a');
-      link.className = 'result-link';
-      link.href = result.source;
-      link.textContent = 'View page';
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      if (bridge) {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          bridge.openLink(result.source);
-        });
+  if (bullets.length > 0) {
+    const list = document.createElement('ul');
+    list.className = 'search-results-answer-list';
+
+    bullets.forEach((line) => {
+      const item = document.createElement('li');
+
+      const icon = document.createElement('span');
+      icon.className = 'answer-item-icon';
+      icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M6 10l2.5 2.5L14 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      item.appendChild(icon);
+
+      const text = document.createElement('span');
+      text.className = 'answer-item-text';
+      text.textContent = line;
+      item.appendChild(text);
+
+      list.appendChild(item);
+    });
+
+    content.appendChild(list);
+  } else if (!title) {
+    const paragraph = document.createElement('p');
+    paragraph.className = 'search-results-answer-text';
+    paragraph.textContent = resultText;
+    content.appendChild(paragraph);
+  }
+
+  // "Continue on the website" — only shown inside a host bridge (a standalone
+  // EDS preview has no host to open an external link through). Mirrors the
+  // "Open in Audience Of 1" button on get-product-details: same destination,
+  // same ?q= intent param, no token/redeem — the intent travels in the URL.
+  if (bridge) {
+    const intent = query || title || 'search results';
+
+    const openExternalUrl = async (url) => {
+      // eslint-disable-next-line no-console
+      console.log('[of1] opening', url);
+      if (typeof window !== 'undefined' && typeof window.openai?.openExternal === 'function') {
+        window.openai.openExternal({ href: url });
+      } else if (typeof bridge.openLink === 'function') {
+        await bridge.openLink(url);
+      } else {
+        window.open(url, '_blank', 'noopener');
       }
-      card.appendChild(link);
-    }
+    };
 
-    container.appendChild(card);
-  });
+    const continueBtn = document.createElement('button');
+    continueBtn.className = 'continue-btn';
+    continueBtn.textContent = 'Continue on the website';
+    continueBtn.setAttribute('aria-label', 'Continue this search on the website');
+    continueBtn.addEventListener('click', async () => {
+      continueBtn.disabled = true;
+      const original = continueBtn.textContent;
+      continueBtn.textContent = 'Opening…';
+      try {
+        const base = 'https://main--of1-acc28ccf--of1-labs.aem.page/of1';
+        await openExternalUrl(`${base}?q=${encodeURIComponent(intent)}`);
+        continueBtn.textContent = 'Opening…';
+        setTimeout(() => { continueBtn.textContent = original; }, 1500);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('[of1] failed:', e);
+        continueBtn.textContent = original;
+      } finally {
+        continueBtn.disabled = false;
+      }
+    });
+    content.appendChild(continueBtn);
+  }
 
-  block.appendChild(container);
+  card.appendChild(content);
+  block.appendChild(card);
 }

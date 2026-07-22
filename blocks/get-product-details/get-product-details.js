@@ -247,11 +247,13 @@ function renderProduct(block, product, bridge) {
         const sep = productUrl.includes('?') ? '&' : '?';
         await openExternalUrl(`${productUrl}${sep}h=${encodeURIComponent(token)}`);
         continueBtn.textContent = 'Opening website…';
+        setTimeout(() => { continueBtn.textContent = original; }, 1500);
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error('[handoff] failed:', e);
-        continueBtn.disabled = false;
         continueBtn.textContent = original;
+      } finally {
+        continueBtn.disabled = false;
       }
     });
     content.appendChild(continueBtn);
@@ -270,11 +272,13 @@ function renderProduct(block, product, bridge) {
         const base = 'https://main--of1-acc28ccf--of1-labs.aem.page/of1';
         await openExternalUrl(`${base}?q=${encodeURIComponent(intent)}`);
         of1Btn.textContent = 'Opening…';
+        setTimeout(() => { of1Btn.textContent = original; }, 1500);
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error('[of1] failed:', e);
-        of1Btn.disabled = false;
         of1Btn.textContent = original;
+      } finally {
+        of1Btn.disabled = false;
       }
     });
     content.appendChild(of1Btn);
