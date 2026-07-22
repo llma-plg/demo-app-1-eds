@@ -205,12 +205,32 @@ function renderProduct(block, product, bridge) {
     content.appendChild(sku);
   }
 
-  // "Continue on website" handoff: mint a single-use token carrying the user's
-  // anonymized intent (echoed by the get-product-details handler into
-  // structuredContent.intent), then ask the host to open the partner site with
-  // only the opaque token in the URL. Only shown inside a host bridge — a
-  // standalone EDS preview has no host to open a link through.
+  // Handoff buttons — only shown inside a host bridge (a standalone EDS preview
+  // has no host to open an external link through).
   if (bridge) {
+    // Prefer the model-supplied journey summary; fall back to a product-derived
+    // one so a handoff still carries context if the model omitted intent.
+    const intent = product.intent
+      || (product.name ? `user is interested in ${product.name}` : '');
+
+    // Open an external URL through the host. ChatGPT implements the vendor
+    // openExternal (gated on redirectDomains); the MCP-standard ui/open-link is
+    // used by other hosts. Try the vendor API first, then the bridge, then a
+    // plain anchor as a last resort.
+    const openExternalUrl = async (url) => {
+      // eslint-disable-next-line no-console
+      console.log('[handoff] opening', url);
+      if (typeof window !== 'undefined' && typeof window.openai?.openExternal === 'function') {
+        window.openai.openExternal({ href: url });
+      } else if (typeof bridge.openLink === 'function') {
+        await bridge.openLink(url);
+      } else {
+        window.open(url, '_blank', 'noopener');
+      }
+    };
+
+    // "Continue on website" — mint a single-use token and deep-link to the real
+    // sunstargum.com product page carrying only the opaque token (?h=).
     const continueBtn = document.createElement('button');
     continueBtn.className = 'continue-btn';
     continueBtn.textContent = 'Continue on website';
@@ -220,39 +240,12 @@ function renderProduct(block, product, bridge) {
       const original = continueBtn.textContent;
       continueBtn.textContent = 'Preparing link…';
       try {
-        // Prefer the model-supplied intent; fall back to a product-derived one
-        // so the handoff still carries context if the model omitted intent.
-        const intent = product.intent
-          || (product.name ? `user is interested in ${product.name}` : '');
-        // eslint-disable-next-line no-console
-        console.log('[handoff] minting, intent =', intent || '(empty)');
         const result = await bridge.callTool('mint-handoff', { intent });
-        // eslint-disable-next-line no-console
-        console.log('[handoff] mint result =', result);
         const token = result?.structuredContent?.token;
         if (!token) throw new Error('no token returned');
-
-        // Deep-link to the real product page on sunstargum.com, carrying the
-        // handoff token so the site can optionally redeem the intent. The
-        // product_url comes from get_product_details' structuredContent; fall
-        // back to the US products index if it's missing.
         const productUrl = product.product_url || 'https://www.sunstargum.com/us-en/products.html';
         const sep = productUrl.includes('?') ? '&' : '?';
-        const url = `${productUrl}${sep}h=${encodeURIComponent(token)}`;
-
-        // Open the external URL. ChatGPT implements the vendor openExternal
-        // (gated on redirectDomains); the MCP-standard ui/open-link is used by
-        // other hosts. Try the vendor API first, then the bridge, then a
-        // plain anchor as a last resort.
-        // eslint-disable-next-line no-console
-        console.log('[handoff] opening', url);
-        if (typeof window !== 'undefined' && typeof window.openai?.openExternal === 'function') {
-          window.openai.openExternal({ href: url });
-        } else if (typeof bridge.openLink === 'function') {
-          await bridge.openLink(url);
-        } else {
-          window.open(url, '_blank', 'noopener');
-        }
+        await openExternalUrl(`${productUrl}${sep}h=${encodeURIComponent(token)}`);
         continueBtn.textContent = 'Opening website…';
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -262,6 +255,29 @@ function renderProduct(block, product, bridge) {
       }
     });
     content.appendChild(continueBtn);
+
+    // "Open in Audience Of 1" — pass the intent directly as the ?q= query param
+    // (no token/redeem; the intent travels in the URL for this destination).
+    const of1Btn = document.createElement('button');
+    of1Btn.className = 'of1-btn';
+    of1Btn.textContent = 'Open in Audience Of 1';
+    of1Btn.setAttribute('aria-label', 'Open this session in Audience Of 1');
+    of1Btn.addEventListener('click', async () => {
+      of1Btn.disabled = true;
+      const original = of1Btn.textContent;
+      of1Btn.textContent = 'Opening…';
+      try {
+        const base = 'https://main--of1-acc28ccf--of1-labs.aem.page/of1';
+        await openExternalUrl(`${base}?q=${encodeURIComponent(intent)}`);
+        of1Btn.textContent = 'Opening…';
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('[of1] failed:', e);
+        of1Btn.disabled = false;
+        of1Btn.textContent = original;
+      }
+    });
+    content.appendChild(of1Btn);
   }
 
   card.appendChild(content);
