@@ -258,8 +258,9 @@ function renderProduct(block, product, bridge) {
     });
     content.appendChild(continueBtn);
 
-    // "Open in Audience Of 1" — pass the intent directly as the ?q= query param
-    // (no token/redeem; the intent travels in the URL for this destination).
+    // "Open in Audience Of 1" — the intent travels in the URL as the ?q= param,
+    // but sourced from the mint-handoff action (the trimmed/capped intent it
+    // records) rather than the raw client-side string.
     const of1Btn = document.createElement('button');
     of1Btn.className = 'of1-btn';
     of1Btn.textContent = 'Open in Audience Of 1';
@@ -267,10 +268,12 @@ function renderProduct(block, product, bridge) {
     of1Btn.addEventListener('click', async () => {
       of1Btn.disabled = true;
       const original = of1Btn.textContent;
-      of1Btn.textContent = 'Opening…';
+      of1Btn.textContent = 'Preparing link…';
       try {
+        const result = await bridge.callTool('mint-handoff', { intent });
+        const of1Intent = result?.structuredContent?.intent ?? intent;
         const base = 'https://main--of1-acc28ccf--of1-labs.aem.page/of1';
-        await openExternalUrl(`${base}?q=${encodeURIComponent(intent)}`);
+        await openExternalUrl(`${base}?q=${encodeURIComponent(of1Intent)}`);
         of1Btn.textContent = 'Opening…';
         setTimeout(() => { of1Btn.textContent = original; }, 1500);
       } catch (e) {
